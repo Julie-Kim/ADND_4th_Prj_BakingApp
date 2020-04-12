@@ -1,0 +1,2 @@
+rootProject.name='ADND_4th_Prj_BakingApp'
+include ':app'
