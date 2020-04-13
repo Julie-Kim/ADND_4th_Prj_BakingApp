@@ -1,8 +1,11 @@
 package android.example.com.bakingapp.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 
-public class Step {
+public class Step implements Parcelable {
 
     private int mId;
     private String mShortDescription;
@@ -17,6 +20,26 @@ public class Step {
         mVideoUrl = videoUrl;
         mThumbnailUrl = thumbnailUrl;
     }
+
+    protected Step(Parcel in) {
+        mId = in.readInt();
+        mShortDescription = in.readString();
+        mDescription = in.readString();
+        mVideoUrl = in.readString();
+        mThumbnailUrl = in.readString();
+    }
+
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
 
     public int getId() {
         return mId;
@@ -46,5 +69,19 @@ public class Step {
                 "\nDescription: " + mDescription +
                 "\nVideoUrl: " + mVideoUrl +
                 "\nThumbnailUrl: " + mThumbnailUrl;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mId);
+        dest.writeString(mShortDescription);
+        dest.writeString(mDescription);
+        dest.writeString(mVideoUrl);
+        dest.writeString(mThumbnailUrl);
     }
 }

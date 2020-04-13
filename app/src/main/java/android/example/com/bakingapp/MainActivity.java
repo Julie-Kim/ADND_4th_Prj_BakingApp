@@ -72,6 +72,8 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     public void onClick(Recipe recipe) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.KEY_RECIPE_NAME, recipe.getName());
+        intent.putParcelableArrayListExtra(DetailActivity.KEY_RECIPE_INGREDIENTS, recipe.getIngredients());
+        intent.putParcelableArrayListExtra(DetailActivity.KEY_RECIPE_STEPS, recipe.getSteps());
 
         startActivity(intent);
     }
