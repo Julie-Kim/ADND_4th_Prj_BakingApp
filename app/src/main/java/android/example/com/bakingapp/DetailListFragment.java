@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
@@ -25,7 +24,7 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
 
     private FragmentDetailListBinding mBinding;
     private DetailListAdapter mAdapter;
-    private RecyclerView mDetailList;
+    private String mRecipeName;
 
     private OnDetailItemClickListener mCallback;
 
@@ -63,8 +62,15 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
             Intent intent = getActivity().getIntent();
 
             if (intent != null) {
-                if (intent.hasExtra(DetailActivity.KEY_RECIPE_INGREDIENTS)) {
-                    ArrayList<Ingredient> ingredients = intent.getParcelableArrayListExtra(DetailActivity.KEY_RECIPE_INGREDIENTS);
+                if (intent.hasExtra(RecipeConstant.KEY_RECIPE_NAME)) {
+                    String recipeName = intent.getStringExtra(RecipeConstant.KEY_RECIPE_NAME);
+                    Log.d(TAG, "onCreate() recipe: " + recipeName);
+
+                    mRecipeName = recipeName;
+                }
+
+                if (intent.hasExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS)) {
+                    ArrayList<Ingredient> ingredients = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS);
                     if (ingredients != null) {
                         Log.d(TAG, "onCreateView() ingredients count: " + ingredients.size());
 
@@ -72,8 +78,8 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
                     }
                 }
 
-                if (intent.hasExtra(DetailActivity.KEY_RECIPE_STEPS)) {
-                    ArrayList<Step> steps = intent.getParcelableArrayListExtra(DetailActivity.KEY_RECIPE_STEPS);
+                if (intent.hasExtra(RecipeConstant.KEY_RECIPE_STEPS)) {
+                    ArrayList<Step> steps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
                     if (steps != null) {
                         Log.d(TAG, "onCreateView() steps count: " + steps.size());
 
@@ -88,11 +94,17 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
 
     @Override
     public void onClick(ArrayList<Ingredient> ingredients) {
-        // TODO
+        Intent intent = new Intent(getActivity(), StepDetailActivity.class);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
+        intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, ingredients);
+        startActivity(intent);
     }
 
     @Override
     public void onClick(Step step) {
-        // TODO
+        Intent intent = new Intent(getActivity(), StepDetailActivity.class);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_STEP, step);
+        startActivity(intent);
     }
 }

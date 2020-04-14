@@ -12,7 +12,6 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -27,7 +26,6 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
 
     private ActivityMainBinding mBinding;
     private RecipeListAdapter mAdapter;
-    private RecyclerView mRecipeList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     @Override
     public void onClick(Recipe recipe) {
         Intent intent = new Intent(this, DetailActivity.class);
-        intent.putExtra(DetailActivity.KEY_RECIPE_NAME, recipe.getName());
-        intent.putParcelableArrayListExtra(DetailActivity.KEY_RECIPE_INGREDIENTS, recipe.getIngredients());
-        intent.putParcelableArrayListExtra(DetailActivity.KEY_RECIPE_STEPS, recipe.getSteps());
+        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, recipe.getName());
+        intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, recipe.getIngredients());
+        intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS, recipe.getSteps());
 
         startActivity(intent);
     }
