@@ -70,16 +70,18 @@ public class StepDetailActivity extends AppCompatActivity {
             }
         }
 
-        if (intent.hasExtra(RecipeConstant.KEY_RECIPE_STEP)) {
-            Step step = intent.getParcelableExtra(RecipeConstant.KEY_RECIPE_STEP);
-            if (step != null) {
-                Log.d(TAG, "onCreate() step: " + step.getShortDescription());
+        if (intent.hasExtra(RecipeConstant.KEY_RECIPE_STEPS)) {
+            ArrayList<Step> steps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
+            int stepIndex = intent.getIntExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, 0);
+            if (steps != null) {
+                Log.d(TAG, "onCreate() steps count: " + steps.size() + ", step index: " + stepIndex);
 
                 showOrHideIngredients(false);
 
                 StepFragment stepFragment = new StepFragment();
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(RecipeConstant.KEY_RECIPE_STEP, step);
+                bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_STEPS, steps);
+                bundle.putInt(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
                 stepFragment.setArguments(bundle);
 
                 fragmentManager.beginTransaction()

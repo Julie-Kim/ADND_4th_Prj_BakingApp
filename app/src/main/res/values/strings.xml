@@ -6,4 +6,6 @@
     <string name="recipe_ingredients">Recipe Ingredients</string>
     <string name="colon">:</string>
     <string name="bullet">•</string>
+    <string name="prev">Prev</string>
+    <string name="next">Next</string>
 </resources>

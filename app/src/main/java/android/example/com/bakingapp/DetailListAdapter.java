@@ -22,7 +22,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
     public interface DetailOnClickHandler {
         void onClick(ArrayList<Ingredient> ingredients);
 
-        void onClick(Step step);
+        void onClick(ArrayList<Step> step, int stepIndex);
     }
 
     private ArrayList<Ingredient> mIngredientList = new ArrayList<>();
@@ -52,10 +52,11 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
                 mOnClickHandler.onClick(mIngredientList);
             } else {
-                Step step = mStepList.get(position - 1);
-                Log.d(TAG, "onClick(), clicked step id: " + step.getId());
+                int stepIndex = position - 1;
+                Step step = mStepList.get(stepIndex);
+                Log.d(TAG, "onClick(), clicked step index: " + stepIndex);
 
-                mOnClickHandler.onClick(step);
+                mOnClickHandler.onClick(mStepList, stepIndex);
             }
         }
     }

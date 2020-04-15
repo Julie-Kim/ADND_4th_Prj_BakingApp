@@ -101,10 +101,11 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
     }
 
     @Override
-    public void onClick(Step step) {
+    public void onClick(ArrayList<Step> steps, int stepIndex) {
         Intent intent = new Intent(getActivity(), StepDetailActivity.class);
         intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
-        intent.putExtra(RecipeConstant.KEY_RECIPE_STEP, step);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_STEPS, steps);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
         startActivity(intent);
     }
 }
