@@ -13,14 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
-public class StepDetailActivity extends AppCompatActivity {
+public class StepDetailActivity extends AppCompatActivity
+        implements IngredientsFragment.OnNextButtonClickListener, StepFragment.OnPrevButtonClickListener,
+        StepFragment.OnSelectedItemChangeListener {
     private static final String TAG = StepDetailActivity.class.getSimpleName();
 
     private ActivityStepDetailBinding mBinding;
+
+    private String mRecipeName;
+    private ArrayList<Ingredient> mIngredients;
+    private ArrayList<Step> mSteps;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,50 +49,60 @@ public class StepDetailActivity extends AppCompatActivity {
         }
 
         if (intent.hasExtra(RecipeConstant.KEY_RECIPE_NAME)) {
-            String recipeName = intent.getStringExtra(RecipeConstant.KEY_RECIPE_NAME);
-            Log.d(TAG, "onCreate() recipe: " + recipeName);
+            mRecipeName = intent.getStringExtra(RecipeConstant.KEY_RECIPE_NAME);
+            Log.d(TAG, "onCreate() recipe name: " + mRecipeName);
 
-            setTitle(recipeName);
+            setTitle(mRecipeName);
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
         if (intent.hasExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS)) {
-            ArrayList<Ingredient> ingredients = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS);
-            if (ingredients != null) {
-                Log.d(TAG, "onCreate() ingredients count: " + ingredients.size());
-
-                showOrHideIngredients(true);
-
-                IngredientsFragment ingredientsFragment = new IngredientsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS, ingredients);
-                ingredientsFragment.setArguments(bundle);
-
-                fragmentManager.beginTransaction()
-                        .replace(R.id.ingredients_container, ingredientsFragment)
-                        .commit();
-            }
+            mIngredients = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS);
         }
 
         if (intent.hasExtra(RecipeConstant.KEY_RECIPE_STEPS)) {
-            ArrayList<Step> steps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
+            mSteps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
+        }
+
+        if (intent.getBooleanExtra(RecipeConstant.KEY_SHOW_STEPS, false)) {
             int stepIndex = intent.getIntExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, 0);
-            if (steps != null) {
-                Log.d(TAG, "onCreate() steps count: " + steps.size() + ", step index: " + stepIndex);
+            showStepFragment(stepIndex);
+        } else {
+            showIngredientsFragment();
+        }
+    }
 
-                showOrHideIngredients(false);
+    private void showIngredientsFragment() {
+        if (mIngredients != null) {
+            Log.d(TAG, "showIngredientsFragment() ingredients count: " + mIngredients.size());
 
-                StepFragment stepFragment = new StepFragment();
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_STEPS, steps);
-                bundle.putInt(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
-                stepFragment.setArguments(bundle);
+            showOrHideIngredients(true);
 
-                fragmentManager.beginTransaction()
-                        .replace(R.id.step_container, stepFragment)
-                        .commit();
-            }
+            IngredientsFragment ingredientsFragment = new IngredientsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
+            ingredientsFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.ingredients_container, ingredientsFragment)
+                    .commit();
+        }
+    }
+
+    private void showStepFragment(int stepIndex) {
+        if (mSteps != null) {
+            Log.d(TAG, "showStepFragment() steps count: " + mSteps.size() + ", step index: " + stepIndex);
+
+            showOrHideIngredients(false);
+
+            StepFragment stepFragment = new StepFragment();
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_STEPS, mSteps);
+            bundle.putInt(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
+            stepFragment.setArguments(bundle);
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.step_container, stepFragment)
+                    .commit();
         }
     }
 
@@ -109,5 +124,20 @@ public class StepDetailActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNextButtonClick() {
+        showStepFragment(0);
+    }
+
+    @Override
+    public void onPrevButtonClick() {
+        showIngredientsFragment();
+    }
+
+    @Override
+    public void onSelectedItemChanged(int selectedPosition) {
+        // no action
     }
 }

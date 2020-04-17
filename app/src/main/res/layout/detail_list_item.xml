@@ -6,7 +6,7 @@
         android:id="@+id/tv_recipe_detail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/recipe_detail_background"
+        android:background="@drawable/selector_recipe_detail_background"
         android:gravity="center"
         android:letterSpacing="0.1"
         android:lineSpacingExtra="@dimen/small_padding"
@@ -17,5 +17,4 @@
         android:textStyle="bold"
         tools:targetApi="lollipop"
         tools:text="Recipe Detail" />
-
 </layout>

@@ -1,5 +1,6 @@
 package android.example.com.bakingapp;
 
+import android.content.Context;
 import android.example.com.bakingapp.databinding.FragmentStepBinding;
 import android.example.com.bakingapp.model.Step;
 import android.net.Uri;
@@ -37,7 +38,31 @@ public class StepFragment extends Fragment {
     private ArrayList<Step> mStepList;
     private int mStepIndex;
 
+    private OnPrevButtonClickListener mPrevButtonClickListener;
+
+    public interface OnPrevButtonClickListener {
+        void onPrevButtonClick();
+    }
+
+    private OnSelectedItemChangeListener mSelectedItemChangeListener;
+
+    public interface OnSelectedItemChangeListener {
+        void onSelectedItemChanged(int selectedPosition);
+    }
+
     public StepFragment() {
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        try {
+            mPrevButtonClickListener = (OnPrevButtonClickListener) context;
+            mSelectedItemChangeListener = (OnSelectedItemChangeListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnPrevButtonClickListener and OnSelectedItemChangeListener");
+        }
     }
 
     @Nullable
@@ -78,8 +103,13 @@ public class StepFragment extends Fragment {
             public void onClick(View v) {
                 pausePlayer();
 
-                mStepIndex--;
-                initStepUi();
+                if (mStepIndex == 0) {
+                    mPrevButtonClickListener.onPrevButtonClick();
+                } else {
+                    mStepIndex--;
+                    mSelectedItemChangeListener.onSelectedItemChanged(mStepIndex + 1);
+                    initStepUi();
+                }
             }
         });
 
@@ -89,18 +119,13 @@ public class StepFragment extends Fragment {
                 pausePlayer();
 
                 mStepIndex++;
+                mSelectedItemChangeListener.onSelectedItemChanged(mStepIndex + 1);
                 initStepUi();
             }
         });
     }
 
     private void setPrevNextButtonVisibility() {
-        if (mStepIndex == 0) {
-            mBinding.prevButton.setVisibility(View.GONE);
-        } else {
-            mBinding.prevButton.setVisibility(View.VISIBLE);
-        }
-
         if (mStepIndex == mStepList.size() - 1) {
             mBinding.nextButton.setVisibility(View.GONE);
         } else {

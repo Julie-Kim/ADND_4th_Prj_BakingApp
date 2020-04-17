@@ -14,6 +14,18 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_ingredient"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/next_button"
+                style="@style/TextButtonStyle"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:text="@string/next" />
+        </RelativeLayout>
     </LinearLayout>
 </layout>

@@ -1,5 +1,6 @@
 package android.example.com.bakingapp;
 
+import android.content.Context;
 import android.example.com.bakingapp.databinding.FragmentIngredientsBinding;
 import android.example.com.bakingapp.model.Ingredient;
 import android.os.Bundle;
@@ -21,7 +22,24 @@ public class IngredientsFragment extends Fragment {
     private FragmentIngredientsBinding mBinding;
     private IngredientsAdapter mAdapter;
 
+    private OnNextButtonClickListener mNextButtonClickListener;
+
+    public interface OnNextButtonClickListener {
+        void onNextButtonClick();
+    }
+
     public IngredientsFragment() {
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        try {
+            mNextButtonClickListener = (OnNextButtonClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnNextButtonClickListener");
+        }
     }
 
     @Nullable
@@ -40,6 +58,13 @@ public class IngredientsFragment extends Fragment {
             ArrayList<Ingredient> ingredients = getArguments().getParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS);
             mAdapter.setIngredientList(ingredients);
         }
+
+        mBinding.nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mNextButtonClickListener.onNextButtonClick();
+            }
+        });
 
         return mBinding.getRoot();
     }

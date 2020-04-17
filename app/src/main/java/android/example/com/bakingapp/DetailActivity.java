@@ -14,7 +14,9 @@ import androidx.databinding.DataBindingUtil;
 
 import java.util.ArrayList;
 
-public class DetailActivity extends AppCompatActivity implements DetailListFragment.OnDetailItemClickListener {
+public class DetailActivity extends AppCompatActivity implements DetailListFragment.OnDetailItemClickListener,
+        IngredientsFragment.OnNextButtonClickListener, StepFragment.OnPrevButtonClickListener,
+        StepFragment.OnSelectedItemChangeListener {
     private static final String TAG = DetailActivity.class.getSimpleName();
 
     private ActivityDetailBinding mBinding;
@@ -60,6 +62,8 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
         } else {
             mTwoPane = false;
         }
+
+        setTwoPain();
     }
 
     private void showIngredientsFragment() {
@@ -73,14 +77,13 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
                 ingredientsFragment.setArguments(bundle);
+
                 getSupportFragmentManager().beginTransaction()
                         .replace(R.id.ingredients_container, ingredientsFragment)
                         .commit();
             }
         } else {
-            Intent intent = new Intent(this, StepDetailActivity.class);
-            intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
-            intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
+            Intent intent = getStepDetailIntent();
             startActivity(intent);
         }
     }
@@ -103,12 +106,19 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
                         .commit();
             }
         } else {
-            Intent intent = new Intent(this, StepDetailActivity.class);
-            intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
-            intent.putExtra(RecipeConstant.KEY_RECIPE_STEPS, mSteps);
+            Intent intent = getStepDetailIntent();
+            intent.putExtra(RecipeConstant.KEY_SHOW_STEPS, true);
             intent.putExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
             startActivity(intent);
         }
+    }
+
+    private Intent getStepDetailIntent() {
+        Intent intent = new Intent(this, StepDetailActivity.class);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
+        intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_STEPS, mSteps);
+        return intent;
     }
 
     private void showOrHideIngredients(boolean show) {
@@ -133,5 +143,47 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
     @Override
     public void onStepItemSelected(int stepIndex) {
         showStepFragment(stepIndex);
+    }
+
+    @Override
+    public void onNextButtonClick() {
+        setDetailListSelectedPosition(1);
+
+        showStepFragment(0);
+    }
+
+    @Override
+    public void onPrevButtonClick() {
+        setDetailListSelectedPosition(0);
+
+        showIngredientsFragment();
+    }
+
+    private void setTwoPain() {
+        DetailListFragment detailListFragment = getDetailListFragment();
+
+        if (detailListFragment != null) {
+            detailListFragment.setTwoPane(mTwoPane);
+        }
+    }
+
+    private void setDetailListSelectedPosition(int position) {
+        if (mTwoPane) {
+            DetailListFragment detailListFragment = getDetailListFragment();
+
+            if (detailListFragment != null) {
+                detailListFragment.setSelectedPosition(position);
+            }
+        }
+    }
+
+    private DetailListFragment getDetailListFragment() {
+        return (DetailListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.recipe_detail_fragment);
+    }
+
+    @Override
+    public void onSelectedItemChanged(int selectedPosition) {
+        setDetailListSelectedPosition(selectedPosition);
     }
 }

@@ -25,7 +25,9 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
     private FragmentDetailListBinding mBinding;
     private DetailListAdapter mAdapter;
 
-    private OnDetailItemClickListener mCallback;
+    private boolean mTwoPane;
+
+    private OnDetailItemClickListener mDetailItemClickListener;
 
     public interface OnDetailItemClickListener {
         void onIngredientItemSelected();
@@ -41,7 +43,7 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
         super.onAttach(context);
 
         try {
-            mCallback = (OnDetailItemClickListener) context;
+            mDetailItemClickListener = (OnDetailItemClickListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + " must implement OnDetailItemClickListener");
         }
@@ -88,11 +90,21 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
 
     @Override
     public void onClick() {
-        mCallback.onIngredientItemSelected();
+        mDetailItemClickListener.onIngredientItemSelected();
     }
 
     @Override
     public void onClick(int stepIndex) {
-        mCallback.onStepItemSelected(stepIndex);
+        mDetailItemClickListener.onStepItemSelected(stepIndex);
+    }
+
+    void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+        mAdapter.setTwoPane(mTwoPane);
+    }
+
+    void setSelectedPosition(int position) {
+        mBinding.rvDetailList.smoothScrollToPosition(position);
+        mAdapter.setSelectedPosition(position);
     }
 }

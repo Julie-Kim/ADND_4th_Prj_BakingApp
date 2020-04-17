@@ -19,6 +19,9 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
     private final DetailOnClickHandler mOnClickHandler;
 
+    private boolean mTwoPane;
+    private int mSelectedPosition;
+
     public interface DetailOnClickHandler {
         void onClick();
 
@@ -45,15 +48,14 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
         @Override
         public void onClick(View v) {
-            int position = getAdapterPosition();
+            setSelectedPosition(getAdapterPosition());
 
-            if (position == 0) {
+            if (mSelectedPosition == 0) {
                 Log.d(TAG, "onClick(), ingredient list");
 
                 mOnClickHandler.onClick();
             } else {
-                int stepIndex = position - 1;
-                Step step = mStepList.get(stepIndex);
+                int stepIndex = mSelectedPosition - 1;
                 Log.d(TAG, "onClick(), clicked step index: " + stepIndex);
 
                 mOnClickHandler.onClick(stepIndex);
@@ -71,6 +73,8 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
     @Override
     public void onBindViewHolder(@NonNull DetailListAdapterViewHolder holder, int position) {
+        setSelectedState(holder, position);
+
         if (position == 0) {
             holder.mBinding.tvRecipeDetail.setText(R.string.recipe_ingredients);
         } else {
@@ -78,6 +82,16 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
             Log.d(TAG, "onBindViewHolder() stepDescription: " + stepDescription);
             holder.mBinding.tvRecipeDetail.setText(stepDescription);
+        }
+    }
+
+    private void setSelectedState(@NonNull DetailListAdapterViewHolder holder, int position) {
+        if (mTwoPane) {
+            if (mSelectedPosition == position) {
+                holder.mBinding.tvRecipeDetail.setSelected(true);
+            } else {
+                holder.mBinding.tvRecipeDetail.setSelected(false);
+            }
         }
     }
 
@@ -101,5 +115,18 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
         mStepList.addAll(stepList);
 
         notifyDataSetChanged();
+    }
+
+    void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+    }
+
+    void setSelectedPosition(int position) {
+        if (mTwoPane) {
+            mSelectedPosition = position;
+            Log.d(TAG, "setSelectedPosition() position: " + position);
+
+            notifyDataSetChanged();
+        }
     }
 }
