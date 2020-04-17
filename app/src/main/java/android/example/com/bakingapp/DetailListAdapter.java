@@ -122,10 +122,10 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
     }
 
     void setSelectedPosition(int position) {
-        if (mTwoPane) {
-            mSelectedPosition = position;
-            Log.d(TAG, "setSelectedPosition() position: " + position);
+        mSelectedPosition = position;
+        Log.d(TAG, "setSelectedPosition() position: " + position);
 
+        if (mTwoPane) {
             notifyDataSetChanged();
         }
     }

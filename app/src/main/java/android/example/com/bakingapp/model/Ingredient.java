@@ -5,10 +5,17 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 public class Ingredient implements Parcelable {
 
+    @SerializedName("quantity")
     private float mQuantity;
+
+    @SerializedName("measure")
     private String mMeasure;
+
+    @SerializedName("ingredient")
     private String mIngredient;
 
     public Ingredient(float quantity, String measure, String ingredient) {

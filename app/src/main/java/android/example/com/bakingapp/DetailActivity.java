@@ -26,6 +26,7 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
     private String mRecipeName;
     private ArrayList<Ingredient> mIngredients;
     private ArrayList<Step> mSteps;
+    private int mServings;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +54,10 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
             mSteps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
         }
 
+        if (intent.hasExtra(RecipeConstant.KEY_RECIPE_SERVINGS)) {
+            mServings = intent.getIntExtra(RecipeConstant.KEY_RECIPE_SERVINGS, 0);
+        }
+
         if (mBinding.ingredientsContainer != null && mBinding.stepContainer != null) {
             mTwoPane = true;
 
@@ -76,6 +81,7 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
                 IngredientsFragment ingredientsFragment = new IngredientsFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
+                bundle.putInt(RecipeConstant.KEY_RECIPE_SERVINGS, mServings);
                 ingredientsFragment.setArguments(bundle);
 
                 getSupportFragmentManager().beginTransaction()
@@ -118,6 +124,7 @@ public class DetailActivity extends AppCompatActivity implements DetailListFragm
         intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
         intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
         intent.putExtra(RecipeConstant.KEY_RECIPE_STEPS, mSteps);
+        intent.putExtra(RecipeConstant.KEY_RECIPE_SERVINGS, mServings);
         return intent;
     }
 

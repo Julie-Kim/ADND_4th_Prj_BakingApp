@@ -3,9 +3,8 @@ package android.example.com.bakingapp;
 import android.content.Intent;
 import android.example.com.bakingapp.databinding.ActivityMainBinding;
 import android.example.com.bakingapp.model.Recipe;
-import android.example.com.bakingapp.utilities.NetworkUtils;
-import android.example.com.bakingapp.utilities.RecipeJsonUtils;
-import android.os.AsyncTask;
+import android.example.com.bakingapp.utilities.RetrofitConnection;
+import android.example.com.bakingapp.utilities.RetrofitInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,16 +12,16 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import java.lang.ref.WeakReference;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements RecipeListAdapter.RecipeOnClickHandler {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private static final int DEFAULT_RECIPE_WIDTH = 800;
-    private static final String RECIPE_LIST_JSON_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     private ActivityMainBinding mBinding;
     private RecipeListAdapter mAdapter;
@@ -45,7 +44,30 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     private void loadRecipeList() {
         showOrHideRecipeList(true);
 
-        new FetchRecipeListTask(this).execute();
+        RetrofitInterface retrofitInterface = RetrofitConnection.getRetrofitInstance().create(RetrofitInterface.class);
+        Call<ArrayList<Recipe>> call = retrofitInterface.getRecipeList();
+        call.enqueue(new Callback<ArrayList<Recipe>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Recipe>> call, Response<ArrayList<Recipe>> response) {
+                if (response.isSuccessful()) {
+                    ArrayList<Recipe> recipeList = response.body();
+                    Log.d(TAG, "onResponse() size of recipeList: " + recipeList.size());
+
+                    updateRecipeList(recipeList);
+                } else {
+                    showOrHideLoadingIndicator(false);
+                    Log.e(TAG, "onResponse() response is not successful.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Recipe>> call, Throwable t) {
+                showOrHideLoadingIndicator(false);
+
+                Log.e(TAG, "onFailure() : " + t.toString());
+            }
+        });
+
     }
 
     private void showOrHideRecipeList(boolean show) {
@@ -72,62 +94,9 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
         intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, recipe.getName());
         intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, recipe.getIngredients());
         intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS, recipe.getSteps());
+        intent.putExtra(RecipeConstant.KEY_RECIPE_SERVINGS, recipe.getServings());
 
         startActivity(intent);
-    }
-
-    private static class FetchRecipeListTask extends AsyncTask<Void, Void, ArrayList<Recipe>> {
-
-        private WeakReference<MainActivity> mActivityReference;
-
-        FetchRecipeListTask(MainActivity activity) {
-            mActivityReference = new WeakReference<>(activity);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            MainActivity activity = mActivityReference.get();
-            if (activity == null || activity.isFinishing()) {
-                Log.e(TAG, "FetchRecipeListTask, onPreExecute() activity is null or is finishing.");
-                return;
-            }
-
-            activity.showOrHideLoadingIndicator(true);
-        }
-
-        @Override
-        protected ArrayList<Recipe> doInBackground(Void... voids) {
-            try {
-                String recipeJsonResponse = NetworkUtils.getJsonResponse(new URL(RECIPE_LIST_JSON_URL));
-
-                if (recipeJsonResponse != null) {
-                    ArrayList<Recipe> recipeList = RecipeJsonUtils.parseRecipeJson(recipeJsonResponse);
-                    Log.d(TAG, "FetchRecipeListTask, size of recipeList: " + recipeList.size());
-
-                    return recipeList;
-                } else {
-                    Log.e(TAG, "FetchRecipeListTask, No json response.");
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Recipe> recipes) {
-            super.onPostExecute(recipes);
-
-            MainActivity activity = mActivityReference.get();
-            if (activity == null || activity.isFinishing()) {
-                Log.e(TAG, "FetchRecipeListTask, onPostExecute() activity is null or is finishing.");
-                return;
-            }
-
-            activity.updateRecipeList(recipes);
-        }
     }
 
     private void updateRecipeList(ArrayList<Recipe> recipes) {

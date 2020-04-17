@@ -26,6 +26,7 @@ public class StepDetailActivity extends AppCompatActivity
     private String mRecipeName;
     private ArrayList<Ingredient> mIngredients;
     private ArrayList<Step> mSteps;
+    private int mServings;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +64,10 @@ public class StepDetailActivity extends AppCompatActivity
             mSteps = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_STEPS);
         }
 
+        if (intent.hasExtra(RecipeConstant.KEY_RECIPE_SERVINGS)) {
+            mServings = intent.getIntExtra(RecipeConstant.KEY_RECIPE_SERVINGS, 0);
+        }
+
         if (intent.getBooleanExtra(RecipeConstant.KEY_SHOW_STEPS, false)) {
             int stepIndex = intent.getIntExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, 0);
             showStepFragment(stepIndex);
@@ -80,6 +85,7 @@ public class StepDetailActivity extends AppCompatActivity
             IngredientsFragment ingredientsFragment = new IngredientsFragment();
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS, mIngredients);
+            bundle.putInt(RecipeConstant.KEY_RECIPE_SERVINGS, mServings);
             ingredientsFragment.setArguments(bundle);
 
             getSupportFragmentManager().beginTransaction()

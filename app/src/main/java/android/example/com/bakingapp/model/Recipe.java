@@ -5,24 +5,45 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class Recipe implements Parcelable {
 
+    @SerializedName("id")
+    private int mId;
+
+    @SerializedName("name")
     private String mName;
+
+    @SerializedName("ingredients")
     private ArrayList<Ingredient> mIngredients;
+
+    @SerializedName("steps")
     private ArrayList<Step> mSteps;
+
+    @SerializedName("servings")
+    private int mServings;
+
+    @SerializedName("image")
     private String mImageUrl;
 
-    public Recipe(String name, ArrayList<Ingredient> ingredients, ArrayList<Step> steps, String imageUrl) {
+    public Recipe(int id, String name, ArrayList<Ingredient> ingredients, ArrayList<Step> steps, int servings, String imageUrl) {
+        mId = id;
         mName = name;
         mIngredients = ingredients;
         mSteps = steps;
+        mServings = servings;
         mImageUrl = imageUrl;
     }
 
     protected Recipe(Parcel in) {
+        mId = in.readInt();
         mName = in.readString();
+        mIngredients = in.createTypedArrayList(Ingredient.CREATOR);
+        mSteps = in.createTypedArrayList(Step.CREATOR);
+        mServings = in.readInt();
         mImageUrl = in.readString();
     }
 
@@ -38,6 +59,10 @@ public class Recipe implements Parcelable {
         }
     };
 
+    public int getId() {
+        return mId;
+    }
+
     public String getName() {
         return mName;
     }
@@ -50,6 +75,10 @@ public class Recipe implements Parcelable {
         return mSteps;
     }
 
+    public int getServings() {
+        return mServings;
+    }
+
     public String getImageUrl() {
         return mImageUrl;
     }
@@ -57,7 +86,9 @@ public class Recipe implements Parcelable {
     @NonNull
     @Override
     public String toString() {
-        StringBuilder recipeString = new StringBuilder("Name: " + mName);
+        StringBuilder recipeString = new StringBuilder("Id: " + mId);
+
+        recipeString.append("Name: ").append(mName);
 
         for (Ingredient ingredient : mIngredients) {
             recipeString.append("\n").append(ingredient.toString());
@@ -66,6 +97,8 @@ public class Recipe implements Parcelable {
         for (Step step : mSteps) {
             recipeString.append("\n").append(step.toString());
         }
+
+        recipeString.append("\n").append("Servings: ").append(mServings);
 
         recipeString.append("\n").append("Image: ").append(mImageUrl);
 
@@ -79,7 +112,11 @@ public class Recipe implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(mId);
         dest.writeString(mName);
+        dest.writeTypedList(mIngredients);
+        dest.writeTypedList(mSteps);
+        dest.writeInt(mServings);
         dest.writeString(mImageUrl);
     }
 }

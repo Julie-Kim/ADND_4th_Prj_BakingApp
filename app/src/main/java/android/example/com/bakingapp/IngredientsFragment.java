@@ -57,6 +57,9 @@ public class IngredientsFragment extends Fragment {
         if (getArguments() != null) {
             ArrayList<Ingredient> ingredients = getArguments().getParcelableArrayList(RecipeConstant.KEY_RECIPE_INGREDIENTS);
             mAdapter.setIngredientList(ingredients);
+
+            int servings = getArguments().getInt(RecipeConstant.KEY_RECIPE_SERVINGS);
+            setServingsText(servings);
         }
 
         mBinding.nextButton.setOnClickListener(new View.OnClickListener() {
@@ -67,5 +70,14 @@ public class IngredientsFragment extends Fragment {
         });
 
         return mBinding.getRoot();
+    }
+
+    private void setServingsText(int servings) {
+        if (servings > 0) {
+            mBinding.tvServings.setText(getString(R.string.servings, servings));
+            mBinding.tvServings.setVisibility(View.VISIBLE);
+        } else {
+            mBinding.tvServings.setVisibility(View.GONE);
+        }
     }
 }
