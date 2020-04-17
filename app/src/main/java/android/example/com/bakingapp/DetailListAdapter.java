@@ -20,15 +20,15 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
     private final DetailOnClickHandler mOnClickHandler;
 
     public interface DetailOnClickHandler {
-        void onClick(ArrayList<Ingredient> ingredients);
+        void onClick();
 
-        void onClick(ArrayList<Step> step, int stepIndex);
+        void onClick(int stepIndex);
     }
 
     private ArrayList<Ingredient> mIngredientList = new ArrayList<>();
     private ArrayList<Step> mStepList = new ArrayList<>();
 
-    public DetailListAdapter(DetailOnClickHandler onClickHandler) {
+    DetailListAdapter(DetailOnClickHandler onClickHandler) {
         mOnClickHandler = onClickHandler;
     }
 
@@ -36,7 +36,7 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
 
         private DetailListItemBinding mBinding;
 
-        public DetailListAdapterViewHolder(@NonNull View itemView) {
+        DetailListAdapterViewHolder(@NonNull View itemView) {
             super(itemView);
             mBinding = DataBindingUtil.bind(itemView);
 
@@ -50,13 +50,13 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
             if (position == 0) {
                 Log.d(TAG, "onClick(), ingredient list");
 
-                mOnClickHandler.onClick(mIngredientList);
+                mOnClickHandler.onClick();
             } else {
                 int stepIndex = position - 1;
                 Step step = mStepList.get(stepIndex);
                 Log.d(TAG, "onClick(), clicked step index: " + stepIndex);
 
-                mOnClickHandler.onClick(mStepList, stepIndex);
+                mOnClickHandler.onClick(stepIndex);
             }
         }
     }
@@ -89,14 +89,14 @@ public class DetailListAdapter extends RecyclerView.Adapter<DetailListAdapter.De
         return mStepList.size() + 1;
     }
 
-    public void setIngredientList(ArrayList<Ingredient> ingredientList) {
+    void setIngredientList(ArrayList<Ingredient> ingredientList) {
         mIngredientList.clear();
         mIngredientList.addAll(ingredientList);
 
         notifyDataSetChanged();
     }
 
-    public void setStepList(ArrayList<Step> stepList) {
+    void setStepList(ArrayList<Step> stepList) {
         mStepList.clear();
         mStepList.addAll(stepList);
 

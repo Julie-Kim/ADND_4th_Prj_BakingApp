@@ -24,12 +24,13 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
 
     private FragmentDetailListBinding mBinding;
     private DetailListAdapter mAdapter;
-    private String mRecipeName;
 
     private OnDetailItemClickListener mCallback;
 
     public interface OnDetailItemClickListener {
-        void onItemSelected(int position);
+        void onIngredientItemSelected();
+
+        void onStepItemSelected(int stepIndex);
     }
 
     public DetailListFragment() {
@@ -62,13 +63,6 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
             Intent intent = getActivity().getIntent();
 
             if (intent != null) {
-                if (intent.hasExtra(RecipeConstant.KEY_RECIPE_NAME)) {
-                    String recipeName = intent.getStringExtra(RecipeConstant.KEY_RECIPE_NAME);
-                    Log.d(TAG, "onCreate() recipe: " + recipeName);
-
-                    mRecipeName = recipeName;
-                }
-
                 if (intent.hasExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS)) {
                     ArrayList<Ingredient> ingredients = intent.getParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS);
                     if (ingredients != null) {
@@ -93,19 +87,12 @@ public class DetailListFragment extends Fragment implements DetailListAdapter.De
     }
 
     @Override
-    public void onClick(ArrayList<Ingredient> ingredients) {
-        Intent intent = new Intent(getActivity(), StepDetailActivity.class);
-        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
-        intent.putParcelableArrayListExtra(RecipeConstant.KEY_RECIPE_INGREDIENTS, ingredients);
-        startActivity(intent);
+    public void onClick() {
+        mCallback.onIngredientItemSelected();
     }
 
     @Override
-    public void onClick(ArrayList<Step> steps, int stepIndex) {
-        Intent intent = new Intent(getActivity(), StepDetailActivity.class);
-        intent.putExtra(RecipeConstant.KEY_RECIPE_NAME, mRecipeName);
-        intent.putExtra(RecipeConstant.KEY_RECIPE_STEPS, steps);
-        intent.putExtra(RecipeConstant.KEY_RECIPE_STEP_INDEX, stepIndex);
-        startActivity(intent);
+    public void onClick(int stepIndex) {
+        mCallback.onStepItemSelected(stepIndex);
     }
 }

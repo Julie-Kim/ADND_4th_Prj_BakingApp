@@ -10,4 +10,5 @@
     <dimen name="recipe_detail_text_size">22sp</dimen>
     <dimen name="stroke_width">4dp</dimen>
     <dimen name="title_text_padding">@dimen/big_padding</dimen>
+    <dimen name="title_text_padding_vertical">20dp</dimen>
 </resources>
