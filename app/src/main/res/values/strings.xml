@@ -9,4 +9,6 @@
     <string name="prev">Prev</string>
     <string name="next">Next</string>
     <string name="servings">(%d Servings)</string>
+    <string name="previous_button">Previous Recipe Button</string>
+    <string name="next_button">Next Recipe Button</string>
 </resources>

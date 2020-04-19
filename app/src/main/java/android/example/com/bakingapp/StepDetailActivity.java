@@ -32,7 +32,7 @@ public class StepDetailActivity extends AppCompatActivity
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            Log.d(TAG, "onCreate() there is previously saved state. do not create new fragments."); // TODO : check!
+            Log.d(TAG, "onCreate() there is previously saved state. do not create new fragments.");
             return;
         }
 
