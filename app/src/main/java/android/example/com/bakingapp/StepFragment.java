@@ -6,6 +6,7 @@ import android.example.com.bakingapp.model.Step;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -84,6 +85,7 @@ public class StepFragment extends Fragment {
 
     private void initStepUi() {
         Step step = mStepList.get(mStepIndex);
+        Log.d(TAG, "initStepUi() step: " + step);
 
         mBinding.tvStepShortDescription.setText(step.getShortDescription());
         mBinding.tvStepDescription.setText(step.getDescription());
