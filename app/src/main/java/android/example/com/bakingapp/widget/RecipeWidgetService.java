@@ -9,32 +9,20 @@ import android.example.com.bakingapp.R;
 import android.example.com.bakingapp.utilities.PreferenceUtils;
 import android.util.Log;
 
-public class RecipeNavigatingService extends IntentService {
-    private static final String TAG = RecipeNavigatingService.class.getSimpleName();
+public class RecipeWidgetService extends IntentService {
+    private static final String TAG = RecipeWidgetService.class.getSimpleName();
 
     public static final String ACTION_PREV_RECIPE = "android.example.com.bakingapp.widget.action.prev_recipe";
     public static final String ACTION_NEXT_RECIPE = "android.example.com.bakingapp.widget.action.next_recipe";
 
     public static final String ACTION_UPDATE_RECIPE_WIDGETS = "android.example.com.bakingapp.widget.action.update_recipe_widgets";
 
-    public RecipeNavigatingService() {
-        super("RecipeNavigatingService");
-    }
-
-    public static void startActionPrevRecipe(Context context) {
-        Intent intent = new Intent(context, RecipeNavigatingService.class);
-        intent.setAction(ACTION_PREV_RECIPE);
-        context.startService(intent);
-    }
-
-    public static void startActionNextRecipe(Context context) {
-        Intent intent = new Intent(context, RecipeNavigatingService.class);
-        intent.setAction(ACTION_NEXT_RECIPE);
-        context.startService(intent);
+    public RecipeWidgetService() {
+        super("RecipeWidgetService");
     }
 
     public static void startActionUpdateRecipeWidgets(Context context) {
-        Intent intent = new Intent(context, RecipeNavigatingService.class);
+        Intent intent = new Intent(context, RecipeWidgetService.class);
         intent.setAction(ACTION_UPDATE_RECIPE_WIDGETS);
         context.startService(intent);
     }
@@ -56,7 +44,8 @@ public class RecipeNavigatingService extends IntentService {
 
     private void handleActionPrevRecipe() {
         int recipeId = PreferenceUtils.getWidgetRecipeId(this) - 1;
-        recipeId = (recipeId + 4) % 4;
+        int totalNum = PreferenceUtils.getRecipeTotalNum(this);
+        recipeId = (recipeId + totalNum) % (totalNum + 1);
         Log.d(TAG, "handleActionPrevRecipe() recipeId: " + recipeId);
         PreferenceUtils.setWidgetRecipeId(this, recipeId);
 
@@ -65,7 +54,8 @@ public class RecipeNavigatingService extends IntentService {
 
     private void handleActionNextRecipe() {
         int recipeId = PreferenceUtils.getWidgetRecipeId(this) + 1;
-        recipeId = recipeId % 4;
+        int totalNum = PreferenceUtils.getRecipeTotalNum(this);
+        recipeId = recipeId % (totalNum + 1);
         Log.d(TAG, "handleActionNextRecipe() recipeId: " + recipeId);
         PreferenceUtils.setWidgetRecipeId(this, recipeId);
 
@@ -74,11 +64,13 @@ public class RecipeNavigatingService extends IntentService {
 
     private void handleActionUpdateRecipeWidgets() {
         int recipeId = PreferenceUtils.getWidgetRecipeId(this);
-        Log.d(TAG, "handleActionUpdateRecipeWidgets() recipeId: " + recipeId);
+        String recipeName = PreferenceUtils.getRecipeName(this, recipeId);
+        String ingredients = PreferenceUtils.getIngredients(this, recipeId);
+        Log.d(TAG, "handleActionUpdateRecipeWidgets() recipeId: " + recipeId + ", recipeName: " + recipeName + ", ingredients: " + ingredients);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, RecipeWidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.recipe_widget_layout);
-        RecipeWidgetProvider.updateRecipeWidgets(this, appWidgetManager, "Recipe Name " + recipeId, appWidgetIds);
+        RecipeWidgetProvider.updateRecipeWidgets(this, appWidgetManager, recipeId, appWidgetIds);
     }
 }

@@ -22,6 +22,7 @@
             android:layout_marginLeft="@dimen/default_padding"
             android:layout_marginTop="@dimen/default_padding"
             android:contentDescription="@string/previous_button"
+            android:foregroundGravity="bottom"
             android:scaleType="fitXY"
             android:src="@drawable/ic_chevron_left_24dp" />
 
@@ -48,6 +49,7 @@
             android:layout_marginEnd="@dimen/default_padding"
             android:layout_marginRight="@dimen/default_padding"
             android:contentDescription="@string/next_button"
+            android:foregroundGravity="bottom"
             android:scaleType="fitXY"
             android:src="@drawable/ic_chevron_right_24dp" />
     </RelativeLayout>
@@ -55,8 +57,9 @@
     <TextView
         android:id="@+id/widget_ingredient_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:lineSpacingExtra="@dimen/default_padding"
         android:padding="@dimen/big_padding"
+        android:scrollbars="vertical"
         tools:text=" • Ingredient (1)\n • Ingredient (2)\n • Ingredient (3)" />
 </LinearLayout>

@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".widget.RecipeNavigatingService"
+            android:name=".widget.RecipeWidgetService"
             android:exported="false" />
 
         <receiver android:name=".widget.RecipeWidgetProvider">

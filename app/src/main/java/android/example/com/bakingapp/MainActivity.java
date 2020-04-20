@@ -3,6 +3,7 @@ package android.example.com.bakingapp;
 import android.content.Intent;
 import android.example.com.bakingapp.databinding.ActivityMainBinding;
 import android.example.com.bakingapp.model.Recipe;
+import android.example.com.bakingapp.utilities.PreferenceUtils;
 import android.example.com.bakingapp.utilities.RetrofitConnection;
 import android.example.com.bakingapp.utilities.RetrofitInterface;
 import android.os.Bundle;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
     }
 
     private void loadRecipeList() {
-        showOrHideRecipeList(true);
+        showOrHideLoadingIndicator(true);
 
         RetrofitInterface retrofitInterface = RetrofitConnection.getRetrofitInstance().create(RetrofitInterface.class);
         Call<ArrayList<Recipe>> call = retrofitInterface.getRecipeList();
@@ -105,8 +106,19 @@ public class MainActivity extends AppCompatActivity implements RecipeListAdapter
         if (recipes != null && !recipes.isEmpty()) {
             showOrHideRecipeList(true);
             mAdapter.setRecipeList(recipes);
+
+            updatePreferencesForWidget(recipes);
         } else {
             showOrHideRecipeList(false);
+        }
+    }
+
+    private void updatePreferencesForWidget(ArrayList<Recipe> recipes) {
+        PreferenceUtils.setRecipeTotalNum(this, recipes.size());
+
+        for (Recipe recipe : recipes) {
+            PreferenceUtils.setRecipeName(this, recipe.getId(), recipe.getName());
+            PreferenceUtils.setIngredientList(this, recipe.getId(), recipe.getIngredients());
         }
     }
 }

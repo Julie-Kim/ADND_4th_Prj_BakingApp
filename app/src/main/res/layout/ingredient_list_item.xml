@@ -47,6 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/default_padding"
+                android:paddingLeft="@dimen/default_padding"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 tools:text="100.0" />
 
@@ -55,6 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingStart="@dimen/small_padding"
+                android:paddingLeft="@dimen/small_padding"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 tools:text="K" />
         </LinearLayout>

@@ -88,7 +88,7 @@ public class Recipe implements Parcelable {
     public String toString() {
         StringBuilder recipeString = new StringBuilder("Id: " + mId);
 
-        recipeString.append("Name: ").append(mName);
+        recipeString.append("\nName: ").append(mName);
 
         for (Ingredient ingredient : mIngredients) {
             recipeString.append("\n").append(ingredient.toString());

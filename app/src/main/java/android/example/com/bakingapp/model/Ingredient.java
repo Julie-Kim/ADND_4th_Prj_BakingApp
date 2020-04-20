@@ -62,6 +62,10 @@ public class Ingredient implements Parcelable {
                 "\nIngredient: " + mIngredient;
     }
 
+    public String toStringForWidget() {
+        return " • " + mIngredient + " : " + mQuantity + " " + mMeasure;
+    }
+
     @Override
     public int describeContents() {
         return 0;
